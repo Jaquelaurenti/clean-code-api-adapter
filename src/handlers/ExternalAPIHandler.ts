@@ -12,7 +12,7 @@ export class ExternalAPIHandler {
             const data = await this.externalAPIService.fetchExternalData(endpoint);
             res.status(200).json(data);
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            res.status(500).json({ error: error });
         }
     }
 
@@ -23,7 +23,7 @@ export class ExternalAPIHandler {
             const data = await this.externalAPIService.sendExternalData(endpoint, body);
             res.status(200).json(data);
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            res.status(500).json({ error: error });
         }
     }
 }
