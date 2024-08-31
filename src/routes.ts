@@ -7,6 +7,9 @@ import { MessageQueueService } from './services/MessageQueueService';
 import { LogHandler } from './handlers/LogHandler';
 import { KafkaHandler } from './handlers/KafkaHandler';
 import { SQSHandler } from './handlers/SQSHandler';
+import { ExternalAPIHandler } from './handlers/ExternalAPIHandler';
+import { ExternalAPIAdapter } from './adapters/ExternalAPIAdapter';
+import { ExternalAPIService } from './services/ExternalAPIService';
 
 const router = Router();
 
@@ -24,6 +27,11 @@ const logHandler = new LogHandler(logService);
 const kafkaHandler = new KafkaHandler(messageQueueService);
 const sqsHandler = new SQSHandler(messageQueueService);
 
+// Instancia do External Apis
+const externalAPIAdapter = new ExternalAPIAdapter('https://api.exemplo.com'); // Base URL da API externa
+const externalAPIService = new ExternalAPIService(externalAPIAdapter);
+const externalAPIHandler = new ExternalAPIHandler(externalAPIService);
+
 // Rotas de logs
 router.post('/log/info', (req, res) => logHandler.logInfo(req, res));
 router.post('/log/error', (req, res) => logHandler.logError(req, res));
@@ -35,5 +43,10 @@ router.get('/kafka/receive', (req, res) => kafkaHandler.receiveMessage(req, res)
 // Rotas de SQS
 router.post('/sqs/send', (req, res) => sqsHandler.sendMessage(req, res));
 router.get('/sqs/receive', (req, res) => sqsHandler.receiveMessage(req, res));
+
+// Rotas de External Api
+router.get('/external/get/:endpoint', (req, res) => externalAPIHandler.fetchExternalData(req, res));
+router.post('/external/post/:endpoint', (req, res) => externalAPIHandler.sendExternalData(req, res));
+
 
 export default router;
